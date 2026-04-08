@@ -1,3 +1,106 @@
+// Shared types for API responses
+export interface CarbonScoreData {
+  totalEmission: number
+  score: number
+  grade: string
+  electricityEmission: number
+  transportEmission: number
+  gasEmission: number
+  waterEmission: number
+  otherEmission: number
+  previousMonthChange?: number | null
+  nationalAverage?: number | null
+  month: string
+}
+
+export interface CarbonScoresResponse {
+  score?: CarbonScoreData
+  scores?: CarbonScoreData[]
+  summary?: {
+    totalEmission: number
+    averageScore: number
+    currentMonth: CarbonScoreData | null
+    monthsTracked: number
+  }
+}
+
+export interface BillData {
+  id: string
+  type: string
+  amount: number
+  units?: number | null
+  unitType?: string | null
+  carbonEmission: number
+  date: string
+  month: string
+  receiptUrl?: string | null
+  notes?: string | null
+  entryMethod: string
+}
+
+export interface BillsResponse {
+  bills?: BillData[]
+  bill?: BillData
+}
+
+export interface BudgetData {
+  id: string
+  month: string
+  targetEmission: number
+  currentEmission: number
+  electricityBudget?: number | null
+  transportBudget?: number | null
+  gasBudget?: number | null
+}
+
+export interface BudgetResponse {
+  budget?: BudgetData
+}
+
+export interface RecommendationData {
+  id: string
+  title: string
+  description: string
+  category: string
+  impact: string
+  potentialSaving: number
+  difficulty: string
+}
+
+export interface RecommendationsResponse {
+  recommendations?: RecommendationData[]
+  userTopEmissionCategory?: string | null
+}
+
+export interface ChallengeData {
+  id: string
+  title: string
+  description: string
+  category: string
+  difficulty: string
+  targetReduction: number
+  duration: number
+  points: number
+  icon?: string | null
+  userChallenge?: {
+    status: string
+    progress: number
+    carbonSaved: number
+    startDate: string
+    endDate: string
+  } | null
+}
+
+export interface ChallengesResponse {
+  challenges?: ChallengeData[]
+  stats?: {
+    active: number
+    completed: number
+    totalPoints: number
+    totalCarbonSaved: number
+  }
+}
+
 // API helper for making authenticated requests
 
 export async function apiRequest<T>(
@@ -84,7 +187,7 @@ export const api = {
     if (params?.month) searchParams.set('month', params.month)
     if (params?.type) searchParams.set('type', params.type)
     if (params?.limit) searchParams.set('limit', params.limit.toString())
-    return apiRequest(`/api/bills?${searchParams}`)
+    return apiRequest<BillsResponse>(`/api/bills?${searchParams}`)
   },
 
   createBill: (data: {
@@ -95,32 +198,32 @@ export const api = {
     notes?: string
     entryMethod?: 'scanner' | 'manual'
   }) =>
-    apiRequest('/api/bills', {
+    apiRequest<BillsResponse>('/api/bills', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
 
   uploadBill: (formData: FormData) =>
-    apiRequest('/api/bills/upload', {
+    apiRequest<BillsResponse>('/api/bills/upload', {
       method: 'POST',
       body: formData,
     }),
 
   deleteBill: (id: string) =>
-    apiRequest(`/api/bills/${id}`, { method: 'DELETE' }),
+    apiRequest<{ message: string }>(`/api/bills/${id}`, { method: 'DELETE' }),
 
   // Carbon Score
   getCarbonScores: (params?: { month?: string; limit?: number }) => {
     const searchParams = new URLSearchParams()
     if (params?.month) searchParams.set('month', params.month)
     if (params?.limit) searchParams.set('limit', params.limit.toString())
-    return apiRequest(`/api/carbon/score?${searchParams}`)
+    return apiRequest<CarbonScoresResponse>(`/api/carbon/score?${searchParams}`)
   },
 
   // Carbon Budget
   getCarbonBudget: (month?: string) => {
     const searchParams = month ? `?month=${month}` : ''
-    return apiRequest(`/api/carbon/budget${searchParams}`)
+    return apiRequest<BudgetResponse>(`/api/carbon/budget${searchParams}`)
   },
 
   setCarbonBudget: (data: {
@@ -130,7 +233,7 @@ export const api = {
     transportBudget?: number
     gasBudget?: number
   }) =>
-    apiRequest('/api/carbon/budget', {
+    apiRequest<BudgetResponse>('/api/carbon/budget', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
@@ -138,16 +241,16 @@ export const api = {
   // Challenges
   getChallenges: (includeProgress?: boolean) => {
     const searchParams = includeProgress ? '?progress=true' : ''
-    return apiRequest(`/api/challenges${searchParams}`)
+    return apiRequest<ChallengesResponse>(`/api/challenges${searchParams}`)
   },
 
   getMyChallenges: (status?: string) => {
     const searchParams = status ? `?status=${status}` : ''
-    return apiRequest(`/api/challenges/my${searchParams}`)
+    return apiRequest<ChallengesResponse>(`/api/challenges/my${searchParams}`)
   },
 
   joinChallenge: (challengeId: string) =>
-    apiRequest('/api/challenges', {
+    apiRequest<{ message: string }>('/api/challenges', {
       method: 'POST',
       body: JSON.stringify({ challengeId }),
     }),
@@ -156,19 +259,19 @@ export const api = {
     challengeId: string,
     data: { progress?: number; carbonSaved?: number; status?: string }
   ) =>
-    apiRequest(`/api/challenges/${challengeId}`, {
+    apiRequest<{ message: string }>(`/api/challenges/${challengeId}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     }),
 
   leaveChallenge: (challengeId: string) =>
-    apiRequest(`/api/challenges/${challengeId}`, { method: 'DELETE' }),
+    apiRequest<{ message: string }>(`/api/challenges/${challengeId}`, { method: 'DELETE' }),
 
   // Recommendations
   getRecommendations: (params?: { category?: string; impact?: string }) => {
     const searchParams = new URLSearchParams()
     if (params?.category) searchParams.set('category', params.category)
     if (params?.impact) searchParams.set('impact', params.impact)
-    return apiRequest(`/api/recommendations?${searchParams}`)
+    return apiRequest<RecommendationsResponse>(`/api/recommendations?${searchParams}`)
   },
 }
