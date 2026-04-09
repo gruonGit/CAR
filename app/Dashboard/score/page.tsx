@@ -13,8 +13,8 @@ interface ScoreData {
   transportEmission: number
   gasEmission: number
   grade: string
-  previousMonthChange: number | null
-  nationalAverage: number
+  previousMonthChange?: number | null
+  nationalAverage?: number | null
 }
 
 interface ScoreHistory {

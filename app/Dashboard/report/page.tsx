@@ -29,8 +29,8 @@ import { ImpactVisualization } from "@/components/ImpactVisualization"
 interface Bill {
   id: string
   type: string
-  units: number
-  unitType: string
+  units?: number | null
+  unitType?: string | null
   carbonEmission: number
   date: string
   month: string
