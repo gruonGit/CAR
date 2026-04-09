@@ -30,19 +30,22 @@ export async function GET(request: NextRequest) {
     })
 
     // Transform to include user progress
-    const transformedChallenges = challenges.map((challenge) => ({
-      ...challenge,
-      userProgress: includeUserProgress && challenge.userChallenges?.[0]
-        ? {
-            status: challenge.userChallenges[0].status,
-            progress: challenge.userChallenges[0].progress,
-            carbonSaved: challenge.userChallenges[0].carbonSaved,
-            startDate: challenge.userChallenges[0].startDate,
-            endDate: challenge.userChallenges[0].endDate,
-          }
-        : null,
-      userChallenges: undefined,
-    }))
+    const transformedChallenges = challenges.map((challenge) => {
+      const c = challenge as typeof challenge & { userChallenges?: { status: string; progress: number; carbonSaved: number; startDate: Date; endDate: Date }[] }
+      return {
+        ...challenge,
+        userProgress: includeUserProgress && c.userChallenges?.[0]
+          ? {
+              status: c.userChallenges[0].status,
+              progress: c.userChallenges[0].progress,
+              carbonSaved: c.userChallenges[0].carbonSaved,
+              startDate: c.userChallenges[0].startDate,
+              endDate: c.userChallenges[0].endDate,
+            }
+          : null,
+        userChallenges: undefined,
+      }
+    })
 
     return NextResponse.json({ challenges: transformedChallenges })
   } catch (error) {
