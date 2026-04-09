@@ -114,7 +114,7 @@ export default function ScorePage() {
     }
 
     // National average comparison
-    if (currentScore.totalEmission > 0) {
+    if (currentScore.totalEmission > 0 && currentScore.nationalAverage != null) {
       const diff = currentScore.nationalAverage - currentScore.totalEmission
       factors.push({
         name: diff > 0 ? "Below national average" : "Above national average",
