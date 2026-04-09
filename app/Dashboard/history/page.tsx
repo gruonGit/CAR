@@ -20,8 +20,8 @@ interface Bill {
   id: string
   date: string
   type: string
-  units: number | null
-  unitType: string | null
+  units?: number | null
+  unitType?: string | null
   carbonEmission: number
   amount: number
 }
