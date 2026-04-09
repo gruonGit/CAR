@@ -119,10 +119,10 @@ export default function ReportPage() {
 
         const months = Object.entries(monthlyEmissions)
         const bestMonth = months.length > 0
-          ? months.reduce((min, curr) => curr[1] < min[1] ? { month: curr[0], emission: curr[1] } : min, { month: months[0][0], emission: months[0][1] })
+          ? months.reduce((min, curr) => curr[1] < min.emission ? { month: curr[0], emission: curr[1] } : min, { month: months[0][0], emission: months[0][1] })
           : null
         const worstMonth = months.length > 0
-          ? months.reduce((max, curr) => curr[1] > max[1] ? { month: curr[0], emission: curr[1] } : max, { month: months[0][0], emission: months[0][1] })
+          ? months.reduce((max, curr) => curr[1] > max.emission ? { month: curr[0], emission: curr[1] } : max, { month: months[0][0], emission: months[0][1] })
           : null
 
         // Calculate breakdown
