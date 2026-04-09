@@ -29,7 +29,7 @@ interface Challenge {
   targetReduction: number
   duration: number
   points: number
-  icon: string | null
+  icon?: string | null
   userProgress?: {
     status: string
     progress: number
