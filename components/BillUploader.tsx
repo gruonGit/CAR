@@ -344,7 +344,8 @@ export function BillUploader() {
 
           setSaved(true)
           if (data?.bill) {
-            setExtractedData(prev => prev ? { ...prev, billId: data.bill.id } : null)
+            const bill = data.bill
+            setExtractedData(prev => prev ? { ...prev, billId: bill.id } : null)
           }
         } catch {
           setError("Failed to save bill. Please try again.")
@@ -412,7 +413,8 @@ export function BillUploader() {
       setSaved(true)
       // Update extracted data with the bill ID
       if (data?.bill) {
-        setExtractedData(prev => prev ? { ...prev, billId: data.bill.id } : null)
+        const bill = data.bill
+        setExtractedData(prev => prev ? { ...prev, billId: bill.id } : null)
       }
     } catch {
       setError("Failed to save bill. Please try again.")
