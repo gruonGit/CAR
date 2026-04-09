@@ -110,8 +110,8 @@ export async function apiRequest<T>(
   try {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
 
-    const headers: HeadersInit = {
-      ...options.headers,
+    const headers: Record<string, string> = {
+      ...(options.headers as Record<string, string>),
     }
 
     // Only set Content-Type for non-FormData requests
