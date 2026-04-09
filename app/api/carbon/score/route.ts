@@ -20,11 +20,7 @@ export async function GET(request: NextRequest) {
         where: { userId_month: { userId: payload.sub, month } },
       })
 
-      if (!score) {
-        return NextResponse.json({ error: 'Score not found' }, { status: 404 })
-      }
-
-      return NextResponse.json({ score })
+      return NextResponse.json({ score: score || null })
     }
 
     // Get history of scores
